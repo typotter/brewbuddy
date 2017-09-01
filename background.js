@@ -4,6 +4,7 @@ var config = {
   storageBucket: "brewconsole.appspot.com",
 };
 var fb = firebase.initializeApp(config);
+var fbAuthenticated = false;
 
 /**
  * initApp handles setting up the Firebase context and registering
@@ -23,6 +24,7 @@ function initApp() {
   // Listen for auth state changes.
   firebase.auth().onAuthStateChanged(function(user) {
     console.log('User state change detected from the Background script of the Chrome Extension:', user);
+    fbAuthenticated = (!!user);
   });
 }
 
@@ -34,9 +36,13 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
   console.log("Received %o from %o, frame", msg, sender.tab, sender.frameId);
   switch (msg.action) {
     case "GET":
-      console.log(msg.path);
-      firebase.database().ref(msg.path).once('value', sendResponse);
-      return true;  // Indicates Async resolution
+      if (fbAuthenticated) {
+        console.log(msg.path);
+        firebase.database().ref(msg.path).once('value', sendResponse);
+        return true;  // Indicates Async resolution
+      } else {
+        sendResponse(null);
+      }
       break;
     case "showPageAction":
       console.log('spa');
