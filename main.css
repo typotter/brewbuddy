@@ -52,9 +52,16 @@ code {
   white-space: pre-wrap;
   word-break: break-all;
 }
-h3 {
-  background: url('firebase-logo.png') no-repeat;
-  background-size: 40px;
-  padding-left: 50px;
-  line-height: 40px;
+
+
+.header-image {
+  height: 240px;
+  display: block;
+  margin: 0px auto;
 }
+
+#quickstart-button {
+  display: block;
+  margin: 0px auto;
+}
+

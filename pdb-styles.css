@@ -1,0 +1,26 @@
+@font-face {font-family: "After Disaster";
+    src: url("//db.onlinewebfonts.com/t/a41479893690030a24b109401e1f7b10.eot");
+    src: url("//db.onlinewebfonts.com/t/a41479893690030a24b109401e1f7b10.eot?#iefix") format("embedded-opentype"),
+    url("//db.onlinewebfonts.com/t/a41479893690030a24b109401e1f7b10.woff2") format("woff2"),
+    url("//db.onlinewebfonts.com/t/a41479893690030a24b109401e1f7b10.woff") format("woff"),
+    url("//db.onlinewebfonts.com/t/a41479893690030a24b109401e1f7b10.ttf") format("truetype"),
+    url("//db.onlinewebfonts.com/t/a41479893690030a24b109401e1f7b10.svg#After Disaster") format("svg");
+}
+
+p {
+  font-face: Roboto Condensed Bold;
+  color: #5A4638;
+}
+
+
+h3, h4 {
+  color: #5A4638;
+  font-family: After Disaster;
+  text-align: center;
+}
+h3 {
+  font-size: 3em;
+}
+h4 {
+  font-size: 2em;
+}
