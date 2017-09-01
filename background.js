@@ -32,8 +32,14 @@ window.onload = function() {
 
 chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
   console.log("Received %o from %o, frame", msg, sender.tab, sender.frameId);
-  if (msg.method == "GET") {
-    firebase.database().ref(msg.path).once('value', sendResponse);
+  switch (msg.action) {
+    case "GET":
+      console.log(msg.path);
+      firebase.database().ref(msg.path).once('value', sendResponse);
+      return true;  // Indicates Async resolution
+      break;
+    case "showPageAction":
+      console.log('spa');
+      break;
   }
-  return true;  // Indicates Async resolution
 });
