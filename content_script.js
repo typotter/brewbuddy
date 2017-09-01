@@ -148,9 +148,3 @@ chrome.runtime.onMessage.addListener(
 // Subscribe to the auth state change. The AUTH_STATE message will be sent
 // immediately with the current state, and sent again as the state changes.
 chrome.runtime.sendMessage({action: "SUB_AUTH_STATE"});
-
-
-
-
-
-
