@@ -11,6 +11,9 @@
     "default_icon": "pdb-logo.png",
     "default_popup": "credentials.html"
   },
+  "web_accessible_resources" : [
+    "*.png"
+  ],
   "content_scripts": [
     {
     "matches": ["https://na2.goekos.com/*"],

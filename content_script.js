@@ -44,10 +44,54 @@ var loadBatchPageOverlay = function(domRoot) {
   console.log("Batch ID: " + batchId);
 
   chrome.runtime.sendMessage({action: "GET", path: '/batches/' + batchId}, function(response) {
-      console.log("Response: ");
-      console.log(response);
+      paintBatchPageOverlay(domRoot, response);
   });
 
+}
+
+var paintBatchPageOverlay = function(domRoot, batchData) {
+  var addLabelLink = function(row, text, href) {
+    var e = domRoot.createElement("a");
+    e.href = href;
+    e.innerText = text;
+    e.target = "_blank";
+    var l = labelBase.cloneNode(true);
+    l.querySelector("label").appendChild(e);
+    infoTable.rows[row].appendChild(l);
+  }
+
+  var infoTable = domRoot.querySelector("#batch_main_info_panel div.section_column table");
+  var labelBase = infoTable.rows[0].children[0].cloneNode(true);
+  labelBase.querySelector("label").innerHTML = "";
+  var valueBase = infoTable.rows[0].children[1].cloneNode(true);
+  valueBase.querySelector("div.readonly").innerHTML = "";
+
+
+  // Inject our Logo into the table.
+  var img = domRoot.createElement("img");
+  img.src = chrome.extension.getURL("pdb-logo-big.png");
+  img.height = 180;
+  var cell = valueBase.cloneNode(true);
+  cell.querySelector("div.readonly").appendChild(img);
+  cell.rowSpan = 6;
+  infoTable.rows[0].appendChild(cell);
+
+
+
+  // Add links to documents to the table.
+  var docs = {
+    "Brewsheet": batchData.documents.brewsheet,
+    "Fermentation Log": batchData.documents["fermentation log"]
+  };
+
+  // There's a couple of hidden rows in the table to account for.
+  var rowIdx = 8;
+  for (var doc in docs) {
+    if (!!(docs[doc])) {
+      addLabelLink(rowIdx, doc, docs[doc]);
+      rowIdx++;
+    }
+  }
 }
 
 var afterViewRecord = function(ele) {
