@@ -1,3 +1,22 @@
+var isAuthed = false;
+
+
+chrome.runtime.onMessage.addListener(
+  function(request, sender, sendResponse) {
+    console.log("CS Received %o from %o, frame", request, sender.tab, sender.frameId);
+    if (request.action == "AUTH_CHANGE") {
+      console.log("Auth state changed", request.state);
+      isAuthed = request.state;
+    }
+  });
+
+
+chrome.runtime.sendMessage({action: "AUTH_STATUS"}, function(response) {
+  console.log("Auth Status response", response);
+  isAuthed = response;
+});
+
+
 var injectScript = function(func) {
   var actualCode = '(' + func + ')();';
   var script = document.createElement('script');
@@ -77,10 +96,14 @@ var loadBatchPageOverlay = function(domRoot) {
 }
 
 
+chrome.runtime.onMessage.addListener(
+  function(request, sender, sendResponse) {
 
-
-
-
+    console.log("CS Received %o from %o, frame", request, sender.tab, sender.frameId);
+    if (request.action == "AUTH_CHANGE") {
+      console.log("Auth state changed", request.state);
+    }
+  });
 
 
 
