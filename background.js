@@ -35,6 +35,9 @@ window.onload = function() {
 chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
   console.log("Received %o from %o, frame", msg, sender.tab, sender.frameId);
   switch (msg.action) {
+    case "AUTH_STATUS":
+      sendResponse(fbAuthenticated);
+      break;
     case "GET":
       if (fbAuthenticated) {
         console.log(msg.path);
