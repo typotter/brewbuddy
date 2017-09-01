@@ -44,12 +44,12 @@ var loadBatchPageOverlay = function(domRoot) {
   console.log("Batch ID: " + batchId);
 
   chrome.runtime.sendMessage({action: "GET", path: '/batches/' + batchId}, function(response) {
-      paintBatchPageOverlay(domRoot, response);
+      paintBatchPageOverlay(domRoot, response, batchId);
   });
 
 }
 
-var paintBatchPageOverlay = function(domRoot, batchData) {
+var paintBatchPageOverlay = function(domRoot, batchData, batchId) {
   var addLabelLink = function(row, text, href) {
     var e = domRoot.createElement("a");
     e.href = href;
@@ -92,6 +92,8 @@ var paintBatchPageOverlay = function(domRoot, batchData) {
       rowIdx++;
     }
   }
+
+  addLabelLink(rowIdx++, "Fermentation Graph", "http://prairiedogbrewing.ca:3000/dashboard/db/batch-status?orgId=1&from=now-7d&to=now&refresh=1m&var-batch_id=" + batchId);
 }
 
 var afterViewRecord = function(ele) {
