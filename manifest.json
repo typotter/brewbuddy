@@ -4,10 +4,11 @@
   "description": "This app overlays additional information on EKOS and syncs data to additional sources.",
   "version": "0.1",
   "icons": {
-    "128": "firebase.png"
+    "128": "pdb-logo.png",
+    "48": "pdb-logo-small.png"
   },
   "browser_action": {
-    "default_icon": "firebase.png",
+    "default_icon": "pdb-logo.png",
     "default_popup": "credentials.html"
   },
   "content_scripts": [

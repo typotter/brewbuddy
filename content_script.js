@@ -1,10 +1,3 @@
-console.log("content script running");
-/*
-chrome.runtime.sendMessage({text: "hey"}, function(response) {
-    console.log("Response: ", response);
-});
-*/
-
 var injectScript = function(func) {
   var actualCode = '(' + func + ')();';
   var script = document.createElement('script');
