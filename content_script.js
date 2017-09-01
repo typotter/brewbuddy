@@ -69,8 +69,7 @@ var loadBatchPageOverlay = function(domRoot) {
     
 
   });*/
-batchId = "PB0060";
-  chrome.runtime.sendMessage({method: "GET", path: '/batches/' + batchId}, function(response) {
+  chrome.runtime.sendMessage({action: "GET", path: '/batches/' + batchId}, function(response) {
       console.log("Response: ");
       console.log(response);
   });
@@ -107,7 +106,7 @@ var injectHooks = function() {
   }
 
   // For development
-  viewRecord('753','56','',window,'','','','','','','','');
+  viewRecord('753','85','',window,'','','','','','','','');
 }
 
 console.log('attaching listeners');
@@ -120,8 +119,7 @@ injectScript(injectHooks);
 // Inform the background page that 
 // this tab should have a page-action
 chrome.runtime.sendMessage({
-  from:    'content',
-  subject: 'showPageAction'
+  action: 'showPageAction'
 });
 
 
