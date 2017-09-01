@@ -34,7 +34,6 @@ window.onload = function() {
 
 function notifyOnAuth(tabId) {
   firebase.auth().onAuthStateChanged(function(user) {
- console.log("auth state changed; now notify!");
     chrome.tabs.sendMessage(tabId, {action: "AUTH_STATUS", state: !!user});
   });
 }
