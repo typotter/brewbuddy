@@ -1,0 +1,35 @@
+{
+  "manifest_version": 2,
+  "name": "Brew Buddy",
+  "description": "This app overlays additional information on EKOS and syncs data to additional sources.",
+  "version": "0.1",
+  "icons": {
+    "128": "firebase.png"
+  },
+  "browser_action": {
+    "default_icon": "firebase.png",
+    "default_popup": "credentials.html"
+  },
+  "content_scripts": [
+    {
+    "matches": ["https://na2.goekos.com/*"],
+    "js":["jquery.min.js", "content_script.js"],
+    "run_at": "document_end"
+    }
+  ],
+  "background": {
+    "page": "background.html"
+  },
+  "permissions": [
+    "identity"
+  ],
+  "content_security_policy":"script-src 'self' https://www.gstatic.com/ https://ajax.googleapis.com https://*.firebaseio.com https://www.googleapis.com; object-src 'self'",
+  "oauth2": {
+    /*"client_id": "1016488080422-qiqbbmmk43ic7lqc5jufcu42g6b3uf8g.apps.googleusercontent.com",*/
+    "client_id": "1016488080422-berhb0doppsmphrqd0llvr9fjddgh0vf.apps.googleusercontent.com",
+    "scopes": [
+      "https://www.googleapis.com/auth/userinfo.email",
+      "https://www.googleapis.com/auth/userinfo.profile"
+    ]
+  }
+}
