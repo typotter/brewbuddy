@@ -7,7 +7,7 @@
     "128": "pdb-logo.png",
     "48": "pdb-logo-small.png"
   },
-  "browser_action": {
+  "page_action": {
     "default_icon": "pdb-logo.png",
     "default_popup": "credentials.html"
   },

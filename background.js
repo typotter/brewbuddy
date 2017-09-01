@@ -48,7 +48,7 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
       }
       break;
     case "showPageAction":
-      console.log('spa');
+      chrome.pageAction.show(sender.tab.id);
       break;
   }
 });
