@@ -1,40 +1,4 @@
-var isAuthed = false;
 
-
-chrome.runtime.onMessage.addListener(
-  function(request, sender, sendResponse) {
-    console.log("CS Received %o from %o, frame", request, sender.tab, sender.frameId);
-    if (request.action == "AUTH_CHANGE") {
-      console.log("Auth state changed", request.state);
-      isAuthed = request.state;
-    }
-  });
-
-
-chrome.runtime.sendMessage({action: "AUTH_STATUS"}, function(response) {
-  console.log("Auth Status response", response);
-  isAuthed = response;
-});
-
-
-var injectScript = function(func) {
-  var actualCode = '(' + func + ')();';
-  var script = document.createElement('script');
-  script.textContent = actualCode;
-  (document.head||document.documentElement).appendChild(script);
-  script.remove();
-}
-
-var afterViewRecord = function(ele) {
-  console.log('parsing page');
-  var overlay = matchPageToOverlay();
-  if (overlay != null) {
-    overlay();
-  } else {
-    console.log('no page overlay');
-  }
-  
-}
 
 var matchPageToOverlay = function() {
   if ($('div.formTitle:contains("Open Batches")').length > 0){
@@ -79,15 +43,6 @@ var loadBatchPageOverlay = function(domRoot) {
 
   console.log("Batch ID: " + batchId);
 
-  //console.log(firebase.auth());
-
-  /*firebase.database().ref('/batches/' + batchId).once('value').then(function(snapshot) {
-    console.log('batch read returned.');
-    console.log(snapshot.val());
-
-    
-
-  });*/
   chrome.runtime.sendMessage({action: "GET", path: '/batches/' + batchId}, function(response) {
       console.log("Response: ");
       console.log(response);
@@ -95,59 +50,63 @@ var loadBatchPageOverlay = function(domRoot) {
 
 }
 
-
-chrome.runtime.onMessage.addListener(
-  function(request, sender, sendResponse) {
-
-    console.log("CS Received %o from %o, frame", request, sender.tab, sender.frameId);
-    if (request.action == "AUTH_CHANGE") {
-      console.log("Auth state changed", request.state);
-    }
-  });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-var injectHooks = function() {
-  var _oldViewRecord = viewRecord;
-  console.log('hooking onto viewRecord.');
-  viewRecord = function(args) {
-    _oldViewRecord.apply(this, arguments);
-    console.log('dispatching after view record.');
-    var event = new Event('afterViewRecord');
-    document.body.dispatchEvent(event);
+var afterViewRecord = function(ele) {
+  console.log('parsing page');
+  var overlay = matchPageToOverlay();
+  if (overlay != null) {
+    overlay();
+  } else {
+    console.log('no page overlay');
   }
-
-  // For development
-  viewRecord('753','85','',window,'','','','','','','','');
+  
 }
 
-console.log('attaching listeners');
-document.body.addEventListener('afterViewRecord', afterViewRecord, false);
 
-console.log('injecting functions');
-injectScript(injectHooks);
+/**
+ * Attaches listeners and injects hooks into page.
+ */
+var integrate = function() {
+
+  console.log('attaching listeners');
+  document.body.addEventListener('afterViewRecord', afterViewRecord, false);
+
+  console.log('injecting functions');
+  injectScript(injectHooks);
+}
+
+/**
+ * Removes listeners and hooks.
+ */
+var teardown = function() {
+  console.log('tear down');
+  document.body.removeEventListener('afterViewRecord', afterViewRecord);
+  injectScript(removeHooks);
+}
 
 
-// Inform the background page that 
-// this tab should have a page-action
+// Inform the background page that this tab should have a page-action.
 chrome.runtime.sendMessage({
   action: 'showPageAction'
 });
 
+// Listen for changes to firebase authentication.
+chrome.runtime.onMessage.addListener(
+  function(request, sender, sendResponse) {
+    if (request.action == "AUTH_STATE") {
+      if (request.state) {
+        integrate();
+      } else {
+        teardown();
+      }
+    }
+  });
 
-var config = {
-  apiKey: "AIzaSyCfHp6dkivD_7EUQyiCn3ulSoJo5L_qoE8",
-  databaseURL: "https://brewconsole.firebaseio.com",
-  storageBucket: "brewconsole.appspot.com",
-};
+// Subscribe to the auth state change. The AUTH_STATE message will be sent
+// immediately with the current state, and sent again as the state changes.
+chrome.runtime.sendMessage({action: "SUB_AUTH_STATE"});
+
+
+
+
+
+

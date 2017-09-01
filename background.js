@@ -32,22 +32,23 @@ window.onload = function() {
   initApp();
 };
 
+/**
+ * Subscribes the provided tab ID to changes in the firebase auth state.
+ */
 function notifyOnAuth(tabId) {
   firebase.auth().onAuthStateChanged(function(user) {
-    chrome.tabs.sendMessage(tabId, {action: "AUTH_STATUS", state: !!user});
+    chrome.tabs.sendMessage(tabId, {action: "AUTH_STATE", state: !!user});
   });
 }
 
 chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
   console.log("Received %o from %o, frame", msg, sender.tab, sender.frameId);
   switch (msg.action) {
-    case "AUTH_STATUS":
+    case "SUB_AUTH_STATE":
       notifyOnAuth(sender.tab.id);
-      sendResponse(fbAuthenticated);
       break;
     case "GET":
       if (fbAuthenticated) {
-        console.log(msg.path);
         firebase.database().ref(msg.path).once('value', sendResponse);
         return true;  // Indicates Async resolution
       } else {
