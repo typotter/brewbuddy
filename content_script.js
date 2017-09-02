@@ -1,4 +1,4 @@
-
+console.log("CS starting");
 
 var matchPageToOverlay = function() {
   if ($('div.formTitle:contains("Open Batches")').length > 0){
@@ -31,6 +31,9 @@ var batchPageOverlay = function() {
   $(domRoot).load(function() {
     if (!loaded) {
       loaded = true;
+      // First, inject stylesheet.
+      injectCss(domRoot.contentDocument, 'pdb-styles.css');
+
       loadBatchPageOverlay(domRoot.contentDocument);
     }
 
@@ -70,9 +73,13 @@ var paintBatchPageOverlay = function(domRoot, batchData, batchId) {
   // Inject our Logo into the table.
   var img = domRoot.createElement("img");
   img.src = chrome.extension.getURL("pdb-logo-big.png");
-  img.height = 180;
+  img.classList.add('pdb-logo');
   var cell = valueBase.cloneNode(true);
   cell.querySelector("div.readonly").appendChild(img);
+  var txt = domRoot.createElement("div");
+  txt.classList.add('pdb-logo-text');
+  txt.innerText = "Technology Department";
+  cell.querySelector("div.readonly").appendChild(txt);
   cell.rowSpan = 6;
   infoTable.rows[0].appendChild(cell);
 
@@ -100,6 +107,7 @@ var afterViewRecord = function(ele) {
   console.log('parsing page');
   var overlay = matchPageToOverlay();
   if (overlay != null) {
+    // Paint the overlay.
     overlay();
   } else {
     console.log('no page overlay');

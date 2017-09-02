@@ -24,3 +24,14 @@ h3 {
 h4 {
   font-size: 2em;
 }
+.pdb-logo-text {
+  margin: 0px auto;
+  font-family: After Disaster;
+  color: #5A4638;
+  font-size: 1.5em;
+}
+.pdb-logo {
+  height: 120px;
+  display: block;
+  margin: 0px auto;
+}

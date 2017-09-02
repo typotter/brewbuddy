@@ -12,13 +12,16 @@
     "default_popup": "credentials.html"
   },
   "web_accessible_resources" : [
-    "*.png"
+    "*.png",
+    "*.css"
   ],
   "content_scripts": [
     {
     "matches": ["https://na2.goekos.com/*"],
     "js":["jquery.min.js", "content_inject.js", "content_script.js"],
-    "run_at": "document_end"
+    "run_at": "document_end",
+    /*"all_frames": true,*/
+    "css": ["pdb-styles.css"]
     }
   ],
   "background": {
