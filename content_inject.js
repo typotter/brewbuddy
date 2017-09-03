@@ -25,7 +25,7 @@ var injectHooks = function() {
   viewRecord._overridenMethod = _oldViewRecord;
 
   // For development
-  //viewRecord('753','33','',window,'','','','','','','','');
+  viewRecord('753','33','',window,'','','','','','','','');
 }
 
 var removeHooks = function() {

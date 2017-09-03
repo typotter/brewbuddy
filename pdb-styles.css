@@ -7,7 +7,7 @@
     url("//db.onlinewebfonts.com/t/a41479893690030a24b109401e1f7b10.svg#After Disaster") format("svg");
 }
 
-p {
+p,a {
   font-face: Roboto Condensed Bold;
   color: #5A4638;
 }
@@ -25,13 +25,23 @@ h4 {
   font-size: 2em;
 }
 .pdb-logo-text {
-  margin: 0px auto;
-  font-family: After Disaster;
   color: #5A4638;
+  font-family: After Disaster;
   font-size: 1.5em;
+  text-align: center;
 }
 .pdb-logo {
   height: 120px;
   display: block;
   margin: 0px auto;
+}
+
+div.pdb-column-link {
+  text-align: right;
+  font-size: 1.2em;
+}
+
+.pdb-column {
+  width: 360px;
+  padding: 8px;
 }
