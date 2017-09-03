@@ -37,17 +37,17 @@ window.onload = function() {
  */
 function notifyOnAuth(tabId) {
   firebase.auth().onAuthStateChanged(function(user) {
-    chrome.tabs.sendMessage(tabId, {action: "AUTH_STATE", state: !!user});
+    chrome.tabs.sendMessage(tabId, {action: MSG_ACTIONS.AUTH_STATE, state: !!user});
   });
 }
 
 chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
   console.log("Received %o from %o, frame", msg, sender.tab, sender.frameId);
   switch (msg.action) {
-    case "SUB_AUTH_STATE":
+    case MSG_ACTIONS.SUB_AUTH_STATE:
       notifyOnAuth(sender.tab.id);
       break;
-    case "GET":
+    case MSG_ACTIONS.GET:
       if (fbAuthenticated) {
         firebase.database().ref(msg.path).once('value', sendResponse);
         return true;  // Indicates Async resolution
@@ -55,7 +55,15 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
         sendResponse(null);
       }
       break;
-    case "showPageAction":
+    case MSG_ACTIONS.GET_BREWERY_DATA:
+      if (fbAuthenticated) {
+        firebase.database().ref("/brewery").orderByChild('batch_id').equalTo(msg.batchId).once('value', sendResponse);
+        return true;  // Indicates Async resolution
+      } else {
+        sendResponse(null);
+      }
+      break;
+    case MSG_ACTIONS.SHOW_PAGE_ACTION:
       chrome.pageAction.show(sender.tab.id);
       break;
   }

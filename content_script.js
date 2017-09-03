@@ -46,7 +46,7 @@ var loadBatchPageOverlay = function(domRoot) {
 
   console.log("Batch ID: " + batchId);
 
-  chrome.runtime.sendMessage({action: "GET", path: '/batches/' + batchId}, function(response) {
+  chrome.runtime.sendMessage({action: MSG_ACTIONS.GET, path: '/batches/' + batchId}, function(response) {
       paintBatchPageOverlay(domRoot, response, batchId);
   });
 
@@ -64,6 +64,11 @@ var paintBatchPageOverlay = function(domRoot, batchData, batchId) {
     parent.appendChild(d);
   }
 
+  var addStat = function(table, label, data) {
+    var r = domRoot.createElement("tr");
+    r.innerHTML = "<td>" + label + "</td><td>" + data + "</td>";   
+    table.appendChild(r);
+  }
 
   var layoutTable = domRoot.querySelector("#batch_main_info_panel div.section_inner table");
   var pdbCell = domRoot.createElement('td');
@@ -84,21 +89,50 @@ var paintBatchPageOverlay = function(domRoot, batchData, batchId) {
   pdbCell.appendChild(img);
   pdbCell.appendChild(txt);
 
+  if (!!(batchData.documents)) {
 
-  // Add links to documents/
-  var docs = {
-    "Brewsheet": batchData.documents.brewsheet,
-    "Fermentation Log": batchData.documents["fermentation log"]
-  };
+    // Add links to documents/
+    var docs = {
+      "Brewsheet": batchData.documents.brewsheet,
+      "Fermentation Log": batchData.documents["fermentation log"]
+    };
 
-  // There's a couple of hidden rows in the table to account for.
-  for (var doc in docs) {
-    if (!!(docs[doc])) {
-      addLink(pdbCell, doc, docs[doc]);
+    for (var doc in docs) {
+      if (!!(docs[doc])) {
+        addLink(pdbCell, doc, docs[doc]);
+      }
     }
+
+  }
+  addLink(pdbCell, "Fermentation Graph", "http://prairiedogbrewing.ca:3000/dashboard/db/batch-status?orgId=1&from=now-7d&to=now&refresh=1m&var-batch_id=" + batchId);
+
+  var sgToPlato = function(sg) {
+    return (259-(259 / (sg) )).toFixed(2);
   }
 
-  addLink(pdbCell, "Fermentation Graph", "http://prairiedogbrewing.ca:3000/dashboard/db/batch-status?orgId=1&from=now-7d&to=now&refresh=1m&var-batch_id=" + batchId);
+  var addBreweryData = function(data) {
+    if (data == null) return;
+
+    readings = data[Object.keys(data)[0]].readings;
+
+    stats = {
+      "Gravity" : sgToPlato(readings.gravity.value / 1000),
+      "Temperature (tilt)" : readings.tilt_temperature.value,
+      "Temperature (onewire)" : readings['1w_temperature'].value
+    }
+
+    var table = domRoot.createElement("table");
+    table.classList.add("pdb-stat-table");
+    for (var stat in stats) {
+      addStat(table, stat, stats[stat]);
+    }
+    pdbCell.appendChild(table);
+  }
+
+  chrome.runtime.sendMessage({action: MSG_ACTIONS.GET_BREWERY_DATA, batchId: batchId}, function(response) {
+      addBreweryData(response);
+  });
+
 
 }
 
@@ -139,13 +173,13 @@ var teardown = function() {
 
 // Inform the background page that this tab should have a page-action.
 chrome.runtime.sendMessage({
-  action: 'showPageAction'
+  action: MSG_ACTIONS.SHOW_PAGE_ACTION
 });
 
 // Listen for changes to firebase authentication.
 chrome.runtime.onMessage.addListener(
   function(request, sender, sendResponse) {
-    if (request.action == "AUTH_STATE") {
+    if (request.action == MSG_ACTIONS.AUTH_STATE) {
       if (request.state) {
         integrate();
       } else {
@@ -156,4 +190,4 @@ chrome.runtime.onMessage.addListener(
 
 // Subscribe to the auth state change. The AUTH_STATE message will be sent
 // immediately with the current state, and sent again as the state changes.
-chrome.runtime.sendMessage({action: "SUB_AUTH_STATE"});
+chrome.runtime.sendMessage({action: MSG_ACTIONS.SUB_AUTH_STATE});

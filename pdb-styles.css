@@ -28,6 +28,7 @@ h4 {
   color: #5A4638;
   font-family: After Disaster;
   font-size: 1.5em;
+  margin-bottom: 32px;
   text-align: center;
 }
 .pdb-logo {
@@ -42,6 +43,8 @@ div.pdb-column-link {
 }
 
 .pdb-column {
-  width: 360px;
+  font-face: Roboto Condensed Bold;
+  color: #5A4638;
   padding: 8px;
+  width: 240px;
 }

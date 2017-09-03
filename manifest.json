@@ -18,7 +18,7 @@
   "content_scripts": [
     {
     "matches": ["https://na2.goekos.com/*"],
-    "js":["jquery.min.js", "content_inject.js", "content_script.js"],
+    "js":["jquery.min.js", "const.js", "content_inject.js", "content_script.js"],
     "run_at": "document_end",
     /*"all_frames": true,*/
     "css": ["pdb-styles.css"]
