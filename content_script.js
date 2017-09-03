@@ -89,7 +89,7 @@ var paintBatchPageOverlay = function(domRoot, batchData, batchId) {
   pdbCell.appendChild(img);
   pdbCell.appendChild(txt);
 
-  if (!!(batchData.documents)) {
+  if (batchData.hasOwnProperty('documents')) {
 
     // Add links to documents/
     var docs = {
