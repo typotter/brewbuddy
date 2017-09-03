@@ -53,6 +53,7 @@ var loadBatchPageOverlay = function(domRoot) {
 }
 
 var paintBatchPageOverlay = function(domRoot, batchData, batchId) {
+
   var addLink = function(parent, text, href) {
     var e = domRoot.createElement("a");
     e.href = href;
@@ -89,6 +90,7 @@ var paintBatchPageOverlay = function(domRoot, batchData, batchId) {
   pdbCell.appendChild(img);
   pdbCell.appendChild(txt);
 
+  if (batchData == null) return;
   if (batchData.hasOwnProperty('documents')) {
 
     // Add links to documents/
