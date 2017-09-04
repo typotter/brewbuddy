@@ -137,13 +137,16 @@ var afterViewRecord = function(ele) {
 
   var loaded = false;
   $(domRoot).load(function() {
+    if (!loaded) {
+      loaded = true;
 
-    var overlay = matchPageToOverlay();
-    if (overlay != null) {
-      // Paint the overlay.
-      overlay();
-    } else {
-      console.log('no page overlay');
+      var overlay = matchPageToOverlay();
+      if (overlay != null) {
+        // Paint the overlay.
+        overlay();
+      } else {
+        console.log('no page overlay');
+      }
     }
   });  
 }
