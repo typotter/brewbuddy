@@ -98,7 +98,16 @@ var paintBatchPageOverlay = function(domRoot, batchData, batchId) {
     }
 
   }
-  addLink(pdbCell, "Fermentation Graph", "http://prairiedogbrewing.ca:3000/dashboard/db/batch-status?orgId=1&from=now-7d&to=now&refresh=1m&var-batch_id=" + batchId);
+  //addLink(pdbCell, "Fermentation Graph", "http://prairiedogbrewing.ca:3000/dashboard/db/batch-status?orgId=1&from=now-7d&to=now&refresh=1m&var-batch_id=" + batchId);
+
+  var a = domRoot.createElement('a');
+  a.href = "http://prairiedogbrewing.ca:3000/dashboard/db/batch-status?orgId=1&from=now-7d&to=now&refresh=1m&var-batch_id=" + batchId;
+  a.target = "_blank";
+  var i = domRoot.createElement("img");
+  i.src = "http://prairiedogbrewing.ca:3000/render/dashboard-solo/db/batch-status?refresh=1m&from=now-7d&to=now&orgId=1&var-batch_id=" + batchId + "&panelId=1&width=1000&height=500&tz=UTC-06%3A00"
+  i.height=128
+  a.appendChild(i);
+  pdbCell.appendChild(a);
 
   var sgToPlato = function(sg) {
     return (259-(259 / (sg) )).toFixed(2);
