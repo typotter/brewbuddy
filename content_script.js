@@ -1,7 +1,7 @@
 console.log("CS starting");
 
 var matchPageToOverlay = function() {
-  if ($('div.formTitle:contains("Open Batches")').length > 0){
+  if ($('div#batch_main_info_panel', $('#formFrame_0')[0].contentDocument).length > 0){
     return batchPageOverlay;
   }
   return null;
@@ -27,17 +27,11 @@ var batchPageOverlay = function() {
 
   var domRoot = $('#formFrame_0')[0];
 
-  var loaded = false;
-  $(domRoot).load(function() {
-    if (!loaded) {
-      loaded = true;
-      // First, inject stylesheet.
-      injectCss(domRoot.contentDocument, 'pdb-styles.css');
+  loaded = true;
+  // First, inject stylesheet.
+  injectCss(domRoot.contentDocument, 'pdb-styles.css');
 
-      loadBatchPageOverlay(domRoot.contentDocument);
-    }
-
-  });
+  loadBatchPageOverlay(domRoot.contentDocument);
 }
 
 var loadBatchPageOverlay = function(domRoot) {
@@ -94,14 +88,12 @@ var paintBatchPageOverlay = function(domRoot, batchData, batchId) {
   if (batchData.hasOwnProperty('documents')) {
 
     // Add links to documents/
-    var docs = {
-      "Brewsheet": batchData.documents.brewsheet,
-      "Fermentation Log": batchData.documents["fermentation log"]
-    };
+    var docs = ["Brewsheet", "Fermentation Log"]
 
-    for (var doc in docs) {
-      if (!!(docs[doc])) {
-        addLink(pdbCell, doc, docs[doc]);
+    for (var i in docs) {
+      doc = docs[i]
+      if (batchData.documents.hasOwnProperty(doc)) {
+        addLink(pdbCell, doc, batchData.documents[doc]);
       }
     }
 
@@ -140,14 +132,20 @@ var paintBatchPageOverlay = function(domRoot, batchData, batchId) {
 
 var afterViewRecord = function(ele) {
   console.log('parsing page');
-  var overlay = matchPageToOverlay();
-  if (overlay != null) {
-    // Paint the overlay.
-    overlay();
-  } else {
-    console.log('no page overlay');
-  }
-  
+
+  var domRoot = $('#formFrame_0')[0];
+
+  var loaded = false;
+  $(domRoot).load(function() {
+
+    var overlay = matchPageToOverlay();
+    if (overlay != null) {
+      // Paint the overlay.
+      overlay();
+    } else {
+      console.log('no page overlay');
+    }
+  });  
 }
 
 
