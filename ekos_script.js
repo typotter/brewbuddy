@@ -1,41 +1,10 @@
-console.log("CS starting");
-
-var matchPageToOverlay = function() {
-  if ($('div#batch_main_info_panel', $('#formFrame_0')[0].contentDocument).length > 0){
-    return batchPageOverlay;
-  }
-  return null;
-}
 
 
-_FIELD_MAP = {
-  "batch.batch_id": "Batch Number",
-  "batch.product": "Product",
-  "batch.recipe": "Recipe",
-  "batch.status": "Status"};
-
-var getEkosFieldId = function(fieldId, domRoot) {
-  return $('div.inputfieldlabel:has(> label:contains("' + _FIELD_MAP[fieldId] + '"))', domRoot).attr('class').match(/(\d+)Input/)[1];
-}
-
-var getEkosFieldValue = function(id, domRoot) {
-  return $('.' + id + 'InputValue', domRoot).text().trim();
-}
 
 var batchPageOverlay = function() {
   console.log('batch page overlay');
 
-  var domRoot = $('#formFrame_0')[0];
-
-  loaded = true;
-  // First, inject stylesheet.
-  injectCss(domRoot.contentDocument, 'pdb-styles.css');
-
-  loadBatchPageOverlay(domRoot.contentDocument);
-}
-
-var loadBatchPageOverlay = function(domRoot) {
-  console.log('loading page overlay.');
+  var domRoot = window.document;
   batchId = getEkosFieldValue(getEkosFieldId('batch.batch_id', domRoot), domRoot);
 
   console.log("Batch ID: " + batchId);
@@ -139,61 +108,61 @@ var paintBatchPageOverlay = function(domRoot, batchData, batchId) {
 
 }
 
-var afterViewRecord = function(ele) {
+
+
+
+
+
+
+
+
+
+var integrate = function(overlay) {
   console.log('parsing page');
 
-  var domRoot = $('#formFrame_0')[0];
-
-  var loaded = false;
-  $(domRoot).load(function() {
-    if (!loaded) {
-      loaded = true;
-
-      var overlay = matchPageToOverlay();
-      if (overlay != null) {
-        // Paint the overlay.
-        overlay();
-      } else {
-        console.log('no page overlay');
-      }
-    }
-  });  
+  if (overlay != null) {
+    // Paint the overlay.
+    overlay();
+  } else {
+    console.log('no page overlay');
+  }
 }
-
-
-/**
- * Attaches listeners and injects hooks into page.
- */
-var integrate = function() {
-
-  console.log('attaching listeners');
-  document.body.addEventListener('afterViewRecord', afterViewRecord, false);
-
-  console.log('injecting functions');
-  injectScript(injectHooks);
-}
-
-/**
- * Removes listeners and hooks.
- */
 var teardown = function() {
-  console.log('tear down');
-  document.body.removeEventListener('afterViewRecord', afterViewRecord);
-  injectScript(removeHooks);
+  console.log('teardown');
 }
 
 
-// Inform the background page that this tab should have a page-action.
-chrome.runtime.sendMessage({
-  action: MSG_ACTIONS.SHOW_PAGE_ACTION
-});
+
+var matchPageToOverlay = function() {
+  if ($('div#batch_main_info_panel').length > 0){
+    return batchPageOverlay;
+  }
+
+  return null;
+}
+
+
+
+/**
+ * Main Function.
+ */
+var main = function() {
+// Check to see if this is a frame. If so, paint any applicable overlay.
+var overlay = matchPageToOverlay();
+if (overlay == null) {
+  // Inform the background page that this tab should have a page-action.
+  chrome.runtime.sendMessage({
+    action: MSG_ACTIONS.SHOW_PAGE_ACTION
+  });
+  return;
+}
 
 // Listen for changes to firebase authentication.
 chrome.runtime.onMessage.addListener(
   function(request, sender, sendResponse) {
     if (request.action == MSG_ACTIONS.AUTH_STATE) {
       if (request.state) {
-        integrate();
+        integrate(overlay);
       } else {
         teardown();
       }
@@ -203,3 +172,5 @@ chrome.runtime.onMessage.addListener(
 // Subscribe to the auth state change. The AUTH_STATE message will be sent
 // immediately with the current state, and sent again as the state changes.
 chrome.runtime.sendMessage({action: MSG_ACTIONS.SUB_AUTH_STATE});
+
+}();
