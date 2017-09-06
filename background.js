@@ -66,5 +66,17 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
     case MSG_ACTIONS.SHOW_PAGE_ACTION:
       chrome.pageAction.show(sender.tab.id);
       break;
+
+    case MSG_ACTIONS.WRITE_EKOS_MAP:
+      var ref = firebase.database().ref("/ekos_map");
+
+      var items = 0;
+      for (var item in msg.map) {
+        console.log(item, msg.map[item]);
+        ref.child(item).set(msg.map[item]);
+        items++;
+      }
+      sendResponse(items);
+      break;
   }
 });

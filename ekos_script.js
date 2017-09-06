@@ -1,6 +1,8 @@
 
 
 
+
+
 var batchPageOverlay = function() {
   console.log('batch page overlay');
 
@@ -132,12 +134,28 @@ var teardown = function() {
 }
 
 
+var pageMatchers = [
+  {matcher:  function(domRoot) {
+    return $("h1.page_title:contains('Inventory')", domRoot).length > 0;
+  },
+  overlay: insertScanButton}];
+
+
 
 var matchPageToOverlay = function() {
   if ($('div#batch_main_info_panel').length > 0){
     return batchPageOverlay;
   }
 
+
+  console.log('no overlay found for this page');
+
+  for (var i in pageMatchers) {
+    if (pageMatchers[i].matcher(document)) {
+      console.log('matched page');
+      return pageMatchers[i].overlay(document);
+    }
+  }
   return null;
 }
 
