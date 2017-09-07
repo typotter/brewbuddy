@@ -68,11 +68,11 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
       break;
 
     case MSG_ACTIONS.WRITE_EKOS_MAP:
+      console.log("Updating EKOS item map.");
       var ref = firebase.database().ref("/ekos_map");
 
       var items = 0;
       for (var item in msg.map) {
-        console.log(item, msg.map[item]);
         ref.child(item).set(msg.map[item]);
         items++;
       }
