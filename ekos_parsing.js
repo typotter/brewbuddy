@@ -29,6 +29,7 @@ var insertScanButton = function(domRoot) {
 
       var t =$('td#Item', v);
       item.ekos_label = t.text();
+      item.ekos_hash = $(v).attr('rowguid');
 
       items[item.ekos_id] = item;
     });
