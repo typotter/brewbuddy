@@ -44,6 +44,8 @@ var matchPageToOverlay = function() {
 
   console.log('no overlay found for this page');
 
+  injectScript(listenForDataInjection);
+
   for (var i in pageMatchers) {
     if (pageMatchers[i].matcher(document)) {
       console.log('matched page');
