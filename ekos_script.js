@@ -14,11 +14,25 @@ var teardown = function() {
 }
 
 
+var titleMatcher = function(title, overlay) {
+  return {
+    matcher:  function(domRoot) {
+      return $("h1.page_title:contains('" + title + "')", domRoot).length > 0;
+    },
+    overlay: overlay
+  }
+}
+
+
 var pageMatchers = [
-  {matcher:  function(domRoot) {
-    return $("h1.page_title:contains('Inventory')", domRoot).length > 0;
+  {
+    matcher:  function(domRoot) {
+      return $("h1.page_title:contains('Inventory')", domRoot).length > 0;
+    },
+    overlay: deployInventoryScan
   },
-  overlay: deployInventoryScan}];
+  titleMatcher("Product: ", productPageOverlay)
+];
 
 
 

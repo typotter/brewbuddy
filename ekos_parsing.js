@@ -2,19 +2,23 @@ _FIELD_MAP = {
   "batch.batch_id": "Batch Number",
   "batch.product": "Product",
   "batch.recipe": "Recipe",
-  "batch.status": "Status"};
+  "batch.status": "Status",
+  "product.status": "Name"};
 
 var getEkosFieldId = function(fieldId, domRoot) {
-  return $('div.inputfieldlabel:has(> label:contains("' + _FIELD_MAP[fieldId] + '"))', domRoot).attr('class').match(/(\d+)Input/)[1];
+  return _getEkosFieldId(_FIELD_MAP[fieldId]);
+}
+
+var _getEkosFieldId = function(label, domRoot) {
+  return $('div.inputfieldlabel:has(> label:contains("' +label + '"))', domRoot).attr('class').match(/(\d+)Input/)[1];
 }
 
 var getEkosFieldValue = function(id, domRoot) {
   return $('.' + id + 'InputValue', domRoot).text().trim();
 }
 
-var setEkosInputValue = function(fieldId, value, domRoot) {
-  id = getEkosFieldId(fieldId);
-  return $('input#' + id, domRoot)[0].value = value;
+var getValueForLabel = function(label, domRoot) {
+  return getEkosFieldValue(_getEkosFieldId(label, domRoot), domRoot);
 }
 
 var deployInventoryScan = function(domRoot) {
