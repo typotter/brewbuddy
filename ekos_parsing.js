@@ -12,7 +12,8 @@ var getEkosFieldValue = function(id, domRoot) {
   return $('.' + id + 'InputValue', domRoot).text().trim();
 }
 
-var insertScanButton = function(domRoot) {
+
+var deployInventoryScan = function(domRoot) {
 
   tpl = `<button type="button" mobilefriendly="false" title="">
     <div class="CreateButton"></div></button>`;
@@ -36,10 +37,11 @@ var insertScanButton = function(domRoot) {
 
     chrome.runtime.sendMessage({
       action: MSG_ACTIONS.WRITE_EKOS_MAP,
+      section: "inventory_items",
       map: items
     },
     function(count) {
-      alert(count + ' ingredients saved to Firebase');
+      alert(count + ' inventory items saved to Firebase');
     });
 
   };
@@ -47,7 +49,9 @@ var insertScanButton = function(domRoot) {
   var btn = domRoot.createElement('div');
   btn.classList.add('button');
   btn.innerHTML = tpl;
-  $("div.CreateButton", $(btn)).text("Scan Ingredients");
+  $("div.CreateButton", $(btn)).text("Scan Inventory Items");
   $(btn).click(scanEkosIngredients);
   $(btn).appendTo('div.button_section_centered');
 }
+
+
