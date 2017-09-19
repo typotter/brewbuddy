@@ -53,7 +53,7 @@ var getAttr = function(attr) {
   };
 }
 var getGUIDFromRenderCall = function(onclick) {
-  return onclick.match(/render\((.*?)\)/)[1].split(',')[4].replace("'","");  
+  return onclick.match(/render\((.*?)\)/)[1].split(',')[4].replace(new RegExp("'", 'g'), "");
 }
 
 var EKOS_PRODUCT_MAP = {
@@ -197,17 +197,26 @@ var checkForMap = function(items) {
 var doIt = function(recipe) {
   console.log("RECIPE MAPPED", recipe);
 
+  var objProps = [];
+  objProps[EKOS_PROPERTY_IDS.PRODUCT_PARENT] ={
+    Value: product.guid, Text: product.title
+  };
+  objProps[EKOS_PROPERTY_IDS.NAME] ={
+    Value: recipe.version, Text: recipe.version
+  };
+  objProps[EKOS_PROPERTY_IDS.BATCH_SIZE] ={
+    Value: recipe.batch_size, Text: recipe.batch_size
+  };
+  objProps[EKOS_PROPERTY_IDS.BATCH_SIZE_UNIT] ={
+    Value: EKOS_VALUES.LITRES, Text: "Litre(s)"
+  };
+
   var obj = {
     objID: EKOS_OBJECTS.RECIPE.ID,
     objName: EKOS_OBJECTS.RECIPE.NAME,
     pageLayoutID: EKOS_PAGE_LAYOUT_IDS.PRODUCT,
     recordID: 0,
-    title: recipe.version,
-    vol: recipe.batch_size,
-    properties: {
-      productName: product.title,
-      prodGuid: product.guid    
-    },
+    properties: objProps,
     ingredients: {
       mash: recipe.grain,
       hops: recipe.hops,
