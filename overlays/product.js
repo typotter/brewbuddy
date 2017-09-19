@@ -1,14 +1,3 @@
-var r = /tab_(\d+)/;
-var ekosProductMap = {
-  title: "Name"
-}
-
-function EkosObject(map, domRoot) {
-  for (var prop in map) {
-    this[prop] = getValueForLabel(map[prop], domRoot);
-  }
-}
-
 var ozToL = function(oz) { return oz * 0.0295735; }
 var roundOzToL = function(oz) { return Math.round(ozToL(oz)); }
 
@@ -58,7 +47,19 @@ var Mapper = function(section) {
 var BS2_TO_EKOS = "bs2_to_ekos";
 var mapper = new Mapper(BS2_TO_EKOS);
 
+var getAttr = function(attr) {
+  return function(value) {
+    return $(value).attr(attr);
+  };
+}
+var getGUIDFromRenderCall = function(onclick) {
+  return onclick.match(/render\((.*?)\)/)[1].split(',')[4].replace("'","");  
+}
 
+var EKOS_PRODUCT_MAP = {
+  guid: ["li.tab_li a.navTab[onclick*=render]", [getAttr('onclick'), getGUIDFromRenderCall]],
+  title: [getEkosLabelSelector('Name'), [getAttr('class'), getEkosInputId, getEkosFieldValue]]
+}
 
 var BEERSMITH_RECIPE_MAP = {
   title: "F_R_NAME",
@@ -84,10 +85,19 @@ var BEERSMITH_RECIPE_MAP = {
 };
   
 var getTextContent = function(ele) { return ele.textContent; }
-var pipe = function(fcn1, fcn2) {
+var pipe = function(fcn1, fcn2, domroot) {
   return function(ele) {
-    return fcn2(fcn1(ele));
+    return fcn2(fcn1(ele, domroot), domroot);
   };
+}
+var pipes = function(fcns, domroot) {
+  if (fcns.length == 0) {
+    return function(foo, domroot) { return foo; };
+  } else if (fcns.length == 1) {
+    return fcns[0];
+  } else {
+    return pipe(fcns[0], pipes(fcns.slice(1), domroot), domroot);
+  }
 }
 
 var parseDomForObject = function(map, dom) {
@@ -98,6 +108,8 @@ var parseDomForObject = function(map, dom) {
       selector = map[key][0];
       if (typeof(map[key][1]) == "function") {
         transform = pipe(getTextContent, map[key][1]);
+      } else if (Array.isArray(map[key][1])) {
+        transform = pipes(map[key][1]);
       } else {
         transform = function(ele) {
           return parseDomForObject(map[key][1], ele);
@@ -115,14 +127,14 @@ var parseDomForObject = function(map, dom) {
       obj[key] = [];
       if (res.length > 0) {
         res.each(function(k,v) {
-          obj[key].push(transform(v));
+          obj[key].push(transform(v, dom));
         });
       }
     } else {
       if (res.length == 0) {
         obj[key] = null;
       } else {
-        obj[key] = transform(res[0]);
+        obj[key] = transform(res[0], dom);
       }
     }
   }
@@ -157,7 +169,7 @@ var mapIngredients = function(ingredients, ptions) {
   }
 }
 
-var doIt = function(recipe) {
+var promptForInventoryMapping = function(recipe) {
   chrome.runtime.sendMessage({action: MSG_ACTIONS.READ_EKOS_MAP, section: "inventory_items"}, function(options) {
     mapIngredients(recipe.grain, options);
     mapIngredients(recipe.hops, options);
@@ -167,7 +179,7 @@ var doIt = function(recipe) {
 
 var getTabId = function(label) {
   var a = $('a.navTab:contains(\'' + label + '\')');
-  return a.attr('onclick').match(r)[0].match(/\d+/)[0];
+  return a.attr('onclick').match(/tab_(\d+)/)[0].match(/\d+/)[0];
 }
 
 var loadRecipeFromXml = function(recipe) {
@@ -182,6 +194,30 @@ var checkForMap = function(items) {
   return true;
 }
 
+var doIt = function(recipe) {
+  console.log("RECIPE MAPPED", recipe);
+
+  var obj = {
+    objID: EKOS_OBJECTS.RECIPE.ID,
+    objName: EKOS_OBJECTS.RECIPE.NAME,
+    pageLayoutID: EKOS_PAGE_LAYOUT_IDS.PRODUCT,
+    recordID: 0,
+    title: recipe.version,
+    vol: recipe.batch_size,
+    properties: {
+      productName: product.title,
+      prodGuid: product.guid    
+    },
+    ingredients: {
+      mash: recipe.grain,
+      hops: recipe.hops,
+      misc: recipe.misc
+    }
+  }
+
+  var event = new CustomEvent(EVENTS.INJECT_DATA, {detail: obj});
+  document.body.dispatchEvent(event);
+}
 var uploadRecipe = function() {
   var file = document.getElementById('pdb-upload-recipe').files[0];
   var reader = new FileReader();
@@ -198,31 +234,12 @@ var uploadRecipe = function() {
     if (!mapped) {
       alert("Please specify mapping for some ingredients first");
 
-      doIt(recipe);
+      promptForInventoryMapping(recipe);
 
       return;
-    } else {
-      doIt(recipe);
     }
 
-    console.log("RECIPE MAPPED", recipe);
-
-    var obj = {
-      id: 923,
-      objName: "Recipe",
-      title: recipe.version,
-      vol: recipe.batch_size,
-      productName: product.title,
-      ingredients: {
-        mash: recipe.grain,
-        hops: recipe.hops,
-        misc: recipe.misc
-      }
-    }
-
-    var event = new CustomEvent("PDB_INJECT_DATA", {detail: obj});
-    //document.body.dispatchEvent(event);
-
+    doIt(recipe);
 
   }
   reader.readAsText(file);
@@ -245,7 +262,7 @@ var productPageOverlay = function() {
   console.log('product page overlay');
 
   var domRoot = window.document;
-  product = new EkosObject(ekosProductMap, domRoot);
+  product = parseDomForObject(EKOS_PRODUCT_MAP, document);
 
   /*  var obj = {
       id: 923,
@@ -276,7 +293,8 @@ var productPageOverlay = function() {
   document.body.addEventListener('afterRender', addButton, false);
   injectScript(injectHook);
 
-  //chrome.storage.sync.get(["recipe"], function(e) {doIt(e.recipe);});
+  // dev
+  chrome.storage.sync.get(["recipe"], function(e) {doIt(e.recipe);});
 
 }
 

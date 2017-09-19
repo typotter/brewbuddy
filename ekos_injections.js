@@ -18,14 +18,18 @@ var listenForDataInjection = function() {
 var LITRES = "4a711580-0e6c-e411-9f99-d4ae5266e0c4";
 
 var postObject = function(e) {
-  console.log("data inject", e);
+  console.log("data inject", e.detail);
 //    objects.AddObject(e.detail.id, 0, 0, e.detail.objName, "", false);
+  var obj = e.detail;
+
   var vol = e.detail.vol;
   var title = e.detail.title;
   var prodName = e.detail.productName;
-  var prodGUID = objects.Objects[731].RowGUID;
+  var prodGUID = obj.properties.prodGuid;
 
-  objects.AddObject("923",1783,0,'Recipe','');
+  objects.AddObject(obj.objID, obj.pageLayoutID, obj.recordID, obj.objName, '');
+
+
   objects.GetObjectByID("923").AddProperty('10465','null',true,'10465','{"FilterGUID":"","FieldID":10465,"Value":"'+prodGUID+'","ByteValue":null,"Decoration":"","Tooltip":"","Text":"'+prodName+'"}', undefined, 'Product','');
   objects.GetObjectByID("923").AddProperty('10462','null',true,'10462','{"FilterGUID":"","FieldID":10462,"Value":"'+title+'","ByteValue":null,"Decoration":"","Tooltip":"","Text":"'+title+'"}', undefined, 'Title','Title/Version');
   objects.GetObjectByID("923").AddProperty('10463','null',true,'10463','{"FilterGUID":"","FieldID":10463,"Value":"' + vol+'","ByteValue":null,"Decoration":"","Tooltip":"","Text":"'+vol+'"}', null, 'Volume','Volume');

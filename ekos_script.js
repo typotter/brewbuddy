@@ -1,7 +1,5 @@
 
 var integrate = function(overlay) {
-  console.log('parsing page');
-
   if (overlay != null) {
     // Paint the overlay.
     overlay();
@@ -42,13 +40,10 @@ var matchPageToOverlay = function() {
   }
 
 
-  console.log('no overlay found for this page');
-
   injectScript(listenForDataInjection);
 
   for (var i in pageMatchers) {
     if (pageMatchers[i].matcher(document)) {
-      console.log('matched page');
       return pageMatchers[i].overlay(document);
     }
   }

@@ -9,8 +9,16 @@ var getEkosFieldId = function(fieldId, domRoot) {
   return _getEkosFieldId(_FIELD_MAP[fieldId]);
 }
 
+var getEkosLabelSelector = function(label) {
+  return 'div.inputfieldlabel:has(> label:contains("' +label + '"))';
+}
+
+var getEkosInputId = function(str) {
+  return str.match(/(\d+)Input/)[1];
+}
+
 var _getEkosFieldId = function(label, domRoot) {
-  return $('div.inputfieldlabel:has(> label:contains("' +label + '"))', domRoot).attr('class').match(/(\d+)Input/)[1];
+  return $(getEkosLabelSelector(label), domRoot).attr('class').match(/(\d+)Input/)[1];
 }
 
 var getEkosFieldValue = function(id, domRoot) {
