@@ -78,5 +78,12 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
       }
       sendResponse(items);
       break;
+    case MSG_ACTIONS.READ_EKOS_MAP:
+      if (fbAuthenticated) {
+        firebase.database().ref("/ekos_map/" + msg.section).once('value', sendResponse);
+        return true;  // Indicates Async resolution
+      } else {
+        sendResponse(null);
+      }
   }
 });
