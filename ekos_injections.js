@@ -10,11 +10,17 @@ var postObject = function(e) {
   var ekosObj = objects.GetObjectByID(obj.objID);
 
   for (var propId in obj.properties) {
-    ekosObj.AddProperty(propId, null, true, propId, JSON.stringify(obj.properties[propId]));
+    ekosObj.AddProperty(propId, null, true, propId);
+    ekosObj.Properties["#" + propId].Value(obj.properties[propId].Value, obj.properties[propId].Text, "");
   }
 
-  objects.Objects[objects.Objects.length - 1].HasChanged = true;
+  ekosObj.HasChanged = true;
+  console.log('ekosObj', ekosObj);
   objects.Save("upsert", false, false, false, false, false, "", "");
+/*
+  ekosObj.AddProperty('10465','null',true,'10465','{"FilterGUID":"","FieldID":10465,"Value":"'+prodGUID+'","ByteValue":null,"Decoration":"","Tooltip":"","Text":"'+prodName+'"}', undefined, 'Product','');
+*/
+
 }
 
 document.body.addEventListener("PDB_INJECT_DATA", postObject, false);

@@ -3,6 +3,7 @@
  */
 var EKOS_OBJECTS = {
   RECIPE: {ID: "923", NAME: "Recipe"},
+  RECIPE_INGREDIENT: {ID: "924", NAME: "Recipe"},
 };
 
 var EKOS_PAGE_LAYOUT_IDS = {

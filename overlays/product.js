@@ -198,17 +198,17 @@ var doIt = function(recipe) {
   console.log("RECIPE MAPPED", recipe);
 
   var objProps = [];
-  objProps[EKOS_PROPERTY_IDS.PRODUCT_PARENT] ={
+  objProps[EKOS_PROPERTY_IDS.PRODUCT_PARENT] = {
     Value: product.guid, Text: product.title
   };
-  objProps[EKOS_PROPERTY_IDS.NAME] ={
+  objProps[EKOS_PROPERTY_IDS.NAME] = {
     Value: recipe.version, Text: recipe.version
   };
-  objProps[EKOS_PROPERTY_IDS.BATCH_SIZE] ={
+  objProps[EKOS_PROPERTY_IDS.BATCH_SIZE] = {
     Value: recipe.batch_size, Text: recipe.batch_size
   };
-  objProps[EKOS_PROPERTY_IDS.BATCH_SIZE_UNIT] ={
-    Value: EKOS_VALUES.LITRES, Text: "Litre(s)"
+  objProps[EKOS_PROPERTY_IDS.BATCH_SIZE_UNIT] = {
+    Value: EKOS_VALUES.LITRES, Text: "Liter(s)", Decoration: ""
   };
 
   var obj = {
@@ -303,7 +303,7 @@ var productPageOverlay = function() {
   injectScript(injectHook);
 
   // dev
-  chrome.storage.sync.get(["recipe"], function(e) {doIt(e.recipe);});
+  //chrome.storage.sync.get(["recipe"], function(e) {doIt(e.recipe);});
 
 }
 
