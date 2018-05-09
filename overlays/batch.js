@@ -8,10 +8,22 @@ var batchPageOverlay = function() {
 
   console.log("Batch ID: " + batchId);
 
-  chrome.runtime.sendMessage({action: MSG_ACTIONS.GET, path: '/batches/' + batchId}, function(response) {
-      paintBatchPageOverlay(domRoot, response, batchId);
-  });
+  if (batchId == "") {
+    // Assume a new batch
+    chrome.runtime.sendMessage({action: MSG_ACTIONS.GET, path: '/config/ekos'}, function(response) {
+        paintNextBatch(domRoot, response);
+    });
+  } else {
 
+    chrome.runtime.sendMessage({action: MSG_ACTIONS.GET, path: '/batches/' + batchId}, function(response) {
+        paintBatchPageOverlay(domRoot, response, batchId);
+    });
+  }
+}
+
+var paintNextBatch = function(domRoot, ekosConfig) {
+  console.log(ekosConfig);
+  setEkosInputValue('batch.batch_id', ekosConfig.next_batch_id, domRoot);
 }
 
 var paintBatchPageOverlay = function(domRoot, batchData, batchId) {
