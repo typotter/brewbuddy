@@ -29,6 +29,11 @@ var getValueForLabel = function(label, domRoot) {
   return getEkosFieldValue(_getEkosFieldId(label, domRoot), domRoot);
 }
 
+var setEkosInputValue = function(fieldId, value, domRoot) {
+  id = getEkosFieldId(field_id);
+  return $('input#' + id, domRoot)[0].value = value;
+}
+
 var deployInventoryScan = function(domRoot) {
 
   tpl = `<button type="button" mobilefriendly="false" title="">
