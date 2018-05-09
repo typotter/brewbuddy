@@ -12,7 +12,7 @@ var getEkosFieldValue = function(id, domRoot) {
   return $('.' + id + 'InputValue', domRoot).text().trim();
 }
 
-var setEkosInputValue = function(field_id, value, domRoot) {
+var setEkosInputValue = function(fieldId, value, domRoot) {
   id = getEkosFieldId(field_id);
   return $('input#' + id, domRoot)[0].value = value;
 }
