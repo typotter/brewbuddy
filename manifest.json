@@ -9,7 +9,7 @@
   },
   "page_action": {
     "default_icon": "pdb-logo.png",
-    "default_popup": "credentials.html"
+    "default_popup": "popup.html"
   },
   "web_accessible_resources" : [
     "*.png",
