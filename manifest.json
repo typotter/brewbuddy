@@ -19,8 +19,12 @@
     {
     "matches": ["https://na2.goekos.com/*"],
     "js":[
-      "jquery.min.js", "const.js", "ekos_parsing.js",
+      "jquery.min.js", "js/lib/angular.min.js",
+      "js/product.js",
+      "const.js", "ekos_parsing.js", "ekos_injections.js",
+      "content_inject.js",
       "overlays/batch.js",
+      "overlays/product.js",
       "ekos_script.js"],
     "run_at": "document_end",
     "all_frames": true,
@@ -28,7 +32,7 @@
     }
   ],
   "background": {
-    "page": "background.html"
+    "scripts": ["js/lib/firebase.js", "const.js", "background.js"]
   },
   "permissions": [
     "identity"

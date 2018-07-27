@@ -55,6 +55,22 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
         sendResponse(null);
       }
       break;
+    case MSG_ACTIONS.PUT:
+      if (fbAuthenticated) {
+        var ref = firebase.database().ref(msg.path)
+        console.log(ref);
+        var items = 0;
+        console.log(msg.map);
+        for (var item in msg.map) {
+          console.log("setting", item, msg.map[item]);
+          ref.child(item).set(msg.map[item]);
+          items++;
+        }
+        sendResponse(items);
+      } else {
+        sendResponse(null);
+      }
+      break;
     case MSG_ACTIONS.GET_BREWERY_DATA:
       if (fbAuthenticated) {
         firebase.database().ref("/brewery").orderByChild('batch_id').equalTo(msg.batchId).once('value', sendResponse);

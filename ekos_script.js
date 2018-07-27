@@ -14,12 +14,26 @@ var teardown = function() {
 }
 
 
-var pageMatchers = [
-  {matcher:  function(domRoot) {
-    return $("h1.page_title:contains('Inventory')", domRoot).length > 0;
-  },
-  overlay: deployInventoryScan}];
+var titleMatcher = function(title, overlay) {
+  return {
+    matcher:  function(domRoot) {
+      console.log("matcher", title, domRoot);
+      return $("h1.page_title:contains('" + title + "')", domRoot).length > 0;
+    },
+    overlay: overlay
+  }
+}
 
+
+var pageMatchers = [
+  {
+    matcher:  function(domRoot) {
+      return $("h1.page_title:contains('Inventory')", domRoot).length > 0;
+    },
+    overlay: deployInventoryScan
+  },
+  titleMatcher("Product: ", productPageOverlay)
+];
 
 
 var matchPageToOverlay = function() {
@@ -28,14 +42,14 @@ var matchPageToOverlay = function() {
   }
 
 
-  console.log('no overlay found for this page');
-
   for (var i in pageMatchers) {
     if (pageMatchers[i].matcher(document)) {
       console.log('matched page');
       return pageMatchers[i].overlay(document);
     }
   }
+  console.log('no overlay found for this page');
+
   return null;
 }
 
