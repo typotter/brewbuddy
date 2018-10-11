@@ -18,7 +18,11 @@ var pageMatchers = [
   {matcher:  function(domRoot) {
     return $("h1.page_title:contains('Inventory')", domRoot).length > 0;
   },
-  overlay: deployInventoryScan}];
+  overlay: deployInventoryScan},
+  {matcher:  function(domRoot) {
+    return $("div#invoice_title", domRoot).length > 0;
+  },
+  overlay: invoiceAddons}];
 
 
 

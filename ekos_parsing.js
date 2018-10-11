@@ -58,4 +58,48 @@ var deployInventoryScan = function(domRoot) {
   $(btn).appendTo('div.button_section_centered');
 }
 
+var buttonHtml = `
+  <style>
+    @media print { .printhide{ display:none; } }
+  </style>
+  <div class="printhide">
+    <button id="post">Post Invoice to K.N.O.T.S.</button>
+  </div>
+`;
+var invoiceAddons = function(domRoot) {
+  console.log("parsing invoice");
+  var invoicetext = $("div#right_side_top")[0].innerText;
+  var invtable = $("table:has(td:contains('SUBTOTAL')) td");
+  var invoice = {
+    "id": invoicetext.match(/Invoice\: E-(.*)/)[1],
+    "date": invoicetext.match(/Order Date\: (.*)/)[1],
+    items: [],
+    subtotal: parseFloat(invtable[2].innerText.replace('$','')),
+    tax: parseFloat(invtable[5].innerText.replace('$','')),
+    total: parseFloat(invtable[8].innerText.replace('$',''))
+  };
 
+  var ordertable = $("table:has(th:contains('Item Number'))")[0];
+  $("tr:has(td)", ordertable).each(function(i,o) {
+    var td = $("td", o);
+    invoice.items.push({
+      sku: td[1].innerText,
+      quantity: parseInt(td[3].innerText),
+      unit_price: parseFloat(td[4].innerText.replace('$','')),
+      total: parseFloat(td[5].innerText.replace('$',''))
+    });
+  });
+  console.log("invoice", invoice);
+
+  $("div#invoice_title").after(buttonHtml);
+  $("button#post").click(function() {
+    console.log("POSTING invoice to knotted systems.");
+
+    chrome.runtime.sendMessage({
+      action: MSG_ACTIONS.WRITE,
+      section: "invoice/" + invoice.id,
+      map: invoice
+    });
+
+  });
+}
