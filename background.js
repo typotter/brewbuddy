@@ -6,6 +6,8 @@ var config = {
 var fb = firebase.initializeApp(config);
 var fbAuthenticated = false;
 
+var knot = new KnotSource("brewbuddy", "ekos_");
+
 /**
  * initApp handles setting up the Firebase context and registering
  * callbacks for the auth status.
@@ -76,6 +78,21 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
         ref.child(item).set(msg.map[item]);
         items++;
       }
+      sendResponse(items);
+      break;
+
+    case MSG_ACTIONS.WRITE:
+      console.log("Writing to firebase");
+
+      var ref = firebase.database().ref(msg.section);
+
+      var items = 0;
+      for (var item in msg.map) {
+        ref.child(item).set(msg.map[item]);
+        items++;
+      }
+      ref.child("_knot").update(knot.knotTag);
+
       sendResponse(items);
       break;
   }
