@@ -69,10 +69,12 @@ var buttonHtml = `
 var invoiceAddons = function(domRoot) {
   console.log("parsing invoice");
   var invoicetext = $("div#right_side_top")[0].innerText;
+  var customertext = $("div#left_side_bottom")[0].innerText;
   var invtable = $("table:has(td:contains('SUBTOTAL')) td");
   var invoice = {
     "id": invoicetext.match(/Invoice\: E-(.*)/)[1],
     "date": invoicetext.match(/Order Date\: (.*)/)[1],
+    "licensee": customertext.match(/License Number\: (.*)/)[1],
     items: [],
     subtotal: parseFloat(invtable[2].innerText.replace('$','')),
     tax: parseFloat(invtable[5].innerText.replace('$','')),
@@ -85,8 +87,8 @@ var invoiceAddons = function(domRoot) {
     invoice.items.push({
       sku: td[1].innerText,
       quantity: parseInt(td[3].innerText),
-      unit_price: parseFloat(td[4].innerText.replace('$','')),
-      total: parseFloat(td[5].innerText.replace('$',''))
+      unit_price: parseFloat(td[4].innerText.replace('$','').replace(',','')),
+      total: parseFloat(td[5].innerText.replace('$','').replace(',',''))
     });
   });
   console.log("invoice", invoice);
