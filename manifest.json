@@ -20,7 +20,7 @@
     "matches": ["https://na2.goekos.com/*"],
     "js":[
       "jquery.min.js", "const.js", "lib/knot.js", "ekos_parsing.js",
-      "overlays/batch.js", "lib/jspdf.debug.js",
+      "overlays/batch.js",
       "ekos_script.js"],
     "run_at": "document_end",
     "all_frames": true,
