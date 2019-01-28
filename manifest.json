@@ -17,7 +17,7 @@
   ],
   "content_scripts": [
     {
-    "matches": ["https://na2.goekos.com/*"],
+    "matches": ["https://na4.goekos.com/*"],
     "js":[
       "jquery.min.js", "const.js", "lib/knot.js", "ekos_parsing.js",
       "overlays/batch.js",
