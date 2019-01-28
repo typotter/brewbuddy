@@ -94,6 +94,8 @@ var invoiceAddons = function(domRoot) {
   console.log("invoice", invoice);
 
   $("div#invoice_title").after(buttonHtml);
+  document.title = "e-" + invoice.id;
+
   $("button#post").click(function() {
     console.log("POSTING invoice to knotted systems.");
 
